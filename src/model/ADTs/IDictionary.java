@@ -11,4 +11,5 @@ public interface IDictionary<Type1, Type2> {
     boolean isDefined(Type1 key);
     String toString();
     Map<Type1, Type2> getContent();
+    IDictionary<Type1, Type2> deepCopy();
 }

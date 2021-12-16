@@ -5,7 +5,9 @@ import model.ADTs.IDictionary;
 import model.ADTs.IHeap;
 import model.PrgState;
 import model.expressions.IExpression;
+import model.values.RefType;
 import model.values.RefValue;
+import model.values.Type;
 import model.values.Value;
 
 public class HeapAllocationStmt implements IStmt{
@@ -38,12 +40,21 @@ public class HeapAllocationStmt implements IStmt{
                 } else throw new MyException("The expression references a wrong type!");
             } else throw new MyException("The variable "+id+" is not of RefType!");
         } else throw new MyException("The variable "+id+" is not defined!");
-        return state;
+        return null;
     }
 
     @Override
     public IStmt deepCopy() {
         IExpression ex = expression.deepCopy();
         return new HeapAllocationStmt(id, ex);
+    }
+
+    @Override
+    public IDictionary<String, Type> typeCheck(IDictionary<String, Type> typeEnv) throws MyException {
+        Type varType = typeEnv.lookup(id);
+        Type expType = expression.typeCheck(typeEnv);
+        if (varType.equals(new RefType(expType)))
+            return typeEnv;
+        else throw new MyException("New statement: left side and right side have different types!");
     }
 }

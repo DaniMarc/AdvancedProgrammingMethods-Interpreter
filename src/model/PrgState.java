@@ -1,5 +1,6 @@
 package model;
 
+import exceptions.MyException;
 import model.ADTs.IDictionary;
 import model.ADTs.IHeap;
 import model.ADTs.IList;
@@ -17,6 +18,8 @@ public class PrgState {
     private IDictionary<StringValue, BufferedReader> fileTable;
     private IHeap<Integer, Value> heap;
     private IStmt originalProgram;
+    static int MaxPrgId = 0;
+    private final int currentId;
 
     public PrgState(IStack<IStmt> es, IDictionary<String, Value> st, IList<Value> ol, IDictionary<StringValue, BufferedReader> ft, IHeap<Integer, Value> h, IStmt op){
         exeStack = es;
@@ -24,9 +27,17 @@ public class PrgState {
         outList = ol;
         fileTable = ft;
         originalProgram = op;
-        heap = h;
         exeStack.push(op);
+        heap = h;
+        setMaxPrgId(getMaxPrgId() + 1);
+        currentId = getMaxPrgId();
     }
+
+    public static synchronized int getMaxPrgId(){ return MaxPrgId; }
+
+    public static synchronized void setMaxPrgId(int newId){ MaxPrgId = newId; }
+
+    public int getCurrentId() { return currentId; }
 
     public IStack<IStmt> getExecStack() { return exeStack; }
 
@@ -44,9 +55,23 @@ public class PrgState {
 
     public void setOutList(IList<Value> nol) { outList = nol; }
 
-    public String toString() { return String.format("Program state: \n Execution stack:\n%s\n Symbol table\n%s\n Output list \n%s\n File table \n%s\n",
+    public String toString() { return String.format("Program %d state: \n Execution stack:\n%s\n Symbol table\n%s\n Output list \n%s\n File table \n%s\n",
+                                                    currentId,
                                                     exeStack.toString(),
                                                     symTable.toString(),
                                                     outList.toString(),
                                                     fileTable.toString()); }
+
+    public static IStmt deepCopy(IStmt program) { return program.deepCopy(); }
+
+    public boolean isNotCompleted() {
+        return !exeStack.isEmpty();
+    }
+
+    public PrgState oneStep() throws MyException {
+        if(exeStack.isEmpty())
+            throw new MyException("Program stack is empty!");
+        IStmt currentState = exeStack.pop();
+        return currentState.execute(this);
+    }
 }

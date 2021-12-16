@@ -1,8 +1,10 @@
 package model.statements;
 
 import exceptions.MyException;
+import model.ADTs.IDictionary;
 import model.PrgState;
 import model.statements.IStmt;
+import model.values.Type;
 
 public class NopStmt implements IStmt {
 
@@ -10,12 +12,17 @@ public class NopStmt implements IStmt {
 
     @Override
     public PrgState execute(PrgState state) throws MyException {
-        return state;
+        return null;
     }
 
     @Override
     public IStmt deepCopy() {
         return new NopStmt();
+    }
+
+    @Override
+    public IDictionary<String, Type> typeCheck(IDictionary<String, Type> typeEnv) throws MyException {
+        return typeEnv;
     }
 
 }

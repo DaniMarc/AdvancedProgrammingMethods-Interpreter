@@ -5,6 +5,7 @@ import model.ADTs.IDictionary;
 import model.ADTs.IHeap;
 import model.values.BoolType;
 import model.values.BoolValue;
+import model.values.Type;
 import model.values.Value;
 
 public class LogicExp implements IExpression{
@@ -52,6 +53,9 @@ public class LogicExp implements IExpression{
 
     @Override
     public IExpression deepCopy() {
+        IExpression newExp1 = exp1.deepCopy();
+        IExpression newExp2 = exp2.deepCopy();
+
         String newOp="";
         switch (operand) {
             case 1 -> newOp = "&";
@@ -59,6 +63,26 @@ public class LogicExp implements IExpression{
             case 3 -> newOp = "^";
             case 4 -> newOp = "!=";
         }
-        return new LogicExp(newOp, exp1, exp2);
+        return new LogicExp(newOp, newExp1, newExp2);
+    }
+
+    @Override
+    public Type typeCheck(IDictionary<String, Type> typeEnv) throws MyException {
+        String newOp="";
+        switch (operand) {
+            case 1 -> newOp = "&";
+            case 2 -> newOp = "|";
+            case 3 -> newOp = "^";
+            case 4 -> newOp = "!=";
+        }
+
+        Type T1, T2;
+        T1 = exp1.typeCheck(typeEnv);
+        T2 = exp2.typeCheck(typeEnv);
+        if (T1.equals(new BoolType())) {
+            if (T2.equals(new BoolType()))
+                return new BoolType();
+            else throw new MyException("Second operand is not a boolean in [ "+exp1.toString()+newOp+exp2.toString()+" ]");
+        } else throw new MyException("First operand is not a boolean in [ "+exp1.toString()+newOp+exp2.toString()+" ]");
     }
 }

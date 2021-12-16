@@ -10,6 +10,8 @@ public class Dictionary<KeyType, ValueType> implements IDictionary<KeyType, Valu
         dictionary = new HashMap<>();
     }
 
+    public Dictionary(HashMap<KeyType, ValueType> newDict) { dictionary = newDict; }
+
     @Override // method that adds to the dictionary a value of generic type Type2 having a key of generic type Type1
     public void add(KeyType key, ValueType val) {
         // Using putIfAbsent will add to the dictionary the value 'val' only if the key does not exist already
@@ -55,5 +57,16 @@ public class Dictionary<KeyType, ValueType> implements IDictionary<KeyType, Valu
     @Override
     public Map<KeyType, ValueType> getContent() {
         return dictionary;
+    }
+
+    @Override
+    public Dictionary<KeyType, ValueType> deepCopy(){
+        HashMap<KeyType, ValueType> copiedDictionary = new HashMap<>();
+        for (Map.Entry<KeyType, ValueType> element : dictionary.entrySet()){
+            KeyType key = element.getKey();
+            ValueType value = element.getValue();
+            copiedDictionary.put(key, value);
+        }
+        return new Dictionary<KeyType, ValueType>(copiedDictionary);
     }
 }

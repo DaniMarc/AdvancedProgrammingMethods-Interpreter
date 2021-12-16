@@ -7,6 +7,7 @@ import model.PrgState;
 import model.expressions.IExpression;
 import model.values.RefType;
 import model.values.RefValue;
+import model.values.Type;
 import model.values.Value;
 
 import java.sql.Ref;
@@ -38,7 +39,7 @@ public class HeapWritingStmt implements IStmt{
                 } else throw new MyException("There is no variable at this address! #NoodyHome");
             } else throw new MyException("The value of the variable "+id+" must be of RefType!");
         } else throw new MyException("There is no variable with this name");
-        return state;
+        return null;
     }
 
     @Override
@@ -50,5 +51,14 @@ public class HeapWritingStmt implements IStmt{
     public IStmt deepCopy() {
         IExpression exp = expression.deepCopy();
         return new HeapWritingStmt(id, exp);
+    }
+
+    @Override
+    public IDictionary<String, Type> typeCheck(IDictionary<String, Type> typeEnv) throws MyException {
+        Type varType = typeEnv.lookup(id);
+        Type expType = expression.typeCheck(typeEnv);
+        if(varType.equals(new RefType(expType)))
+            return typeEnv;
+        else throw new MyException("Heap writing: left side and right side have different types!");
     }
 }

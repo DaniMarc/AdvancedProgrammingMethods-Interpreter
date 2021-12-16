@@ -61,7 +61,21 @@ public class RelExp implements IExpression{
 
     @Override
     public IExpression deepCopy() {
-        return new RelExp(operator, exp1, exp2);
+        IExpression newExp1 = exp1.deepCopy();
+        IExpression newExp2 = exp2.deepCopy();
+        return new RelExp(operator, newExp1, newExp2);
+    }
+
+    @Override
+    public Type typeCheck(IDictionary<String, Type> typeEnv) throws MyException {
+        Type T1, T2;
+        T1 = exp1.typeCheck(typeEnv);
+        T2 = exp2.typeCheck(typeEnv);
+        if (T1.equals(new IntType())) {
+            if (T2.equals(new IntType()))
+                return new BoolType();
+            else throw new MyException("Second operand is not an integer in ["+exp1.toString()+operator+exp2.toString()+"]");
+        } else throw new MyException("First operand is not an integer in ["+exp1.toString()+operator+exp2.toString()+"]");
     }
 
     @Override

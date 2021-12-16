@@ -30,6 +30,14 @@ public class CloseRFileStmt implements IStmt{
     }
 
     @Override
+    public IDictionary<String, Type> typeCheck(IDictionary<String, Type> typeEnv) throws MyException {
+        Type expType = expression.typeCheck(typeEnv);
+        if (expType.equals(new StringType()))
+            return typeEnv;
+        else throw new MyException("Expression in Open(expression) must be a string!");
+    }
+
+    @Override
     public PrgState execute(PrgState state) throws MyException {
         IDictionary<String, Value> symTbl = state.getSymTable();
         IDictionary<StringValue, BufferedReader> fileTbl = state.getFileTable();
@@ -49,6 +57,6 @@ public class CloseRFileStmt implements IStmt{
                 fileTbl.remove(stringValue);
             } else throw new MyException("The file does not exist!");
         } else throw new MyException("The expression must be of string type!");
-        return state;
+        return null;
     }
 }

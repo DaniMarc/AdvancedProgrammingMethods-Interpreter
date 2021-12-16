@@ -8,8 +8,8 @@ import model.values.Type;
 import model.values.Value;
 
 public class VarDeclStmt implements IStmt {
-    private String name;
-    private Type varType;
+    private final String name;
+    private final Type varType;
 
     public VarDeclStmt(String n, Type vt){
         name = n;
@@ -25,12 +25,19 @@ public class VarDeclStmt implements IStmt {
 
         tmpSymTable.add(name, varType.defaultValue());
 
-        return state;
+        return null;
     }
 
     @Override
     public IStmt deepCopy() {
-        return new VarDeclStmt(name, varType);
+        Type newType = varType.deepCopy();
+        return new VarDeclStmt(name, newType);
+    }
+
+    @Override
+    public IDictionary<String, Type> typeCheck(IDictionary<String, Type> typeEnv) throws MyException {
+        typeEnv.add(name, varType);
+        return typeEnv;
     }
 
     public String toString(){ return ""+varType.toString() + " " + name; }

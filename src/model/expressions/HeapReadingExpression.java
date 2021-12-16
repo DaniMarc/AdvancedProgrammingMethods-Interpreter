@@ -3,7 +3,9 @@ package model.expressions;
 import exceptions.MyException;
 import model.ADTs.IDictionary;
 import model.ADTs.IHeap;
+import model.values.RefType;
 import model.values.RefValue;
+import model.values.Type;
 import model.values.Value;
 
 public class HeapReadingExpression implements IExpression{
@@ -29,6 +31,15 @@ public class HeapReadingExpression implements IExpression{
     public IExpression deepCopy() {
         IExpression exp = expression.deepCopy();
         return new HeapReadingExpression(exp);
+    }
+
+    @Override
+    public Type typeCheck(IDictionary<String, Type> typeEnv) throws MyException {
+        Type typ = expression.typeCheck(typeEnv);
+        if (typ instanceof RefType) {
+            RefType refType = (RefType) typ;
+            return refType.getInner();
+        } else throw new MyException("The rH argument is not a RefType!");
     }
 
     @Override

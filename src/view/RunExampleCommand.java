@@ -13,7 +13,7 @@ public class RunExampleCommand extends Command {
     @Override
     public void execute() {
         try{
-            ctrl.allStep();
+            ctrl.executeProgram();
         } catch (MyException me) {
             System.out.println(me.getMessage());
         }

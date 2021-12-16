@@ -1,6 +1,7 @@
 package model.ADTs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class OutputList<ValueType> implements IList<ValueType>{
     private ArrayList<ValueType> outList;
@@ -17,6 +18,14 @@ public class OutputList<ValueType> implements IList<ValueType>{
     @Override //removes and returns the head of the List
     public ValueType getElement(int index) {
         return outList.get(index);
+    }
+
+    public ArrayList<ValueType> getOutList() {
+        return outList;
+    }
+
+    public void setOutList(ArrayList<ValueType> newList) {
+        outList = newList;
     }
 
     @Override

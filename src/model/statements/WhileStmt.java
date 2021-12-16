@@ -8,6 +8,7 @@ import model.PrgState;
 import model.expressions.IExpression;
 import model.values.BoolType;
 import model.values.BoolValue;
+import model.values.Type;
 import model.values.Value;
 
 public class WhileStmt implements IStmt{
@@ -34,7 +35,7 @@ public class WhileStmt implements IStmt{
             }
         } else throw new MyException("Expression can not evaluate to bool!");
 
-        return state;
+        return null;
     }
 
     @Override
@@ -42,6 +43,15 @@ public class WhileStmt implements IStmt{
         IExpression newe = conditionExpression.deepCopy();
         IStmt news = toBeRepeatedStatement.deepCopy();
         return new WhileStmt(newe, news);
+    }
+
+    @Override
+    public IDictionary<String, Type> typeCheck(IDictionary<String, Type> typeEnv) throws MyException {
+        Type expType = conditionExpression.typeCheck(typeEnv);
+        if(expType.equals(new BoolType())){
+            toBeRepeatedStatement.typeCheck(typeEnv.deepCopy());
+            return typeEnv;
+        } else throw new MyException("While statement: the condition in While statement is not of bool type!");
     }
 
     @Override

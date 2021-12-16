@@ -31,6 +31,17 @@ public class ReadFileStmt implements IStmt{
     }
 
     @Override
+    public IDictionary<String, Type> typeCheck(IDictionary<String, Type> typeEnv) throws MyException {
+        Type varType = typeEnv.lookup(varName);
+        Type expType = expression.typeCheck(typeEnv);
+        if (varType.equals(new IntType())) {
+            if (expType.equals(new StringType()))
+                return typeEnv;
+            else throw new MyException("Read file expression must evaluate to a string!");
+        } else throw new MyException("The expression read from file must be an integer!");
+    }
+
+    @Override
     public PrgState execute(PrgState state) throws MyException {
         IDictionary<String, Value> symTbl = state.getSymTable();
         IDictionary<StringValue, BufferedReader> fileTbl = state.getFileTable();
@@ -61,6 +72,6 @@ public class ReadFileStmt implements IStmt{
                 } else throw new MyException("The file name should be a string!");
             } else throw new MyException("The variable to read must be of type Int!");
         } else throw new MyException("There is no such file in the file table!");
-        return state;
+        return null;
     }
 }

@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Repository implements IRepository{
     private OutputList<PrgState> myProgStates;
@@ -44,26 +46,35 @@ public class Repository implements IRepository{
     }
 
     @Override
-    public PrgState getCurrentProg(int index) {
-        return myProgStates.getElement(index);
+    public ArrayList<PrgState> getProgramList() {
+        return myProgStates.getOutList();
     }
 
     @Override
-    public void logPrgStateExec() throws MyException, IOException {
+    public void logPrgStateExec(PrgState crtProgram) throws MyException, IOException {
         PrintWriter logFile = new PrintWriter(new BufferedWriter(new FileWriter(logFilePath, true)));
         logFile.println("========================= STARTING LOG SESSION =========================");
+        if (crtProgram.getCurrentId() >= 10)
+            logFile.println((String.format("Currently printing program with ID: %d", crtProgram.getCurrentId()-10+1)));
+        else
+            logFile.println((String.format("Currently printing program with ID: %d", crtProgram.getCurrentId())));
         logFile.println(">Execution Stack");
-        logFile.println("\t"+getCurrentProg(0).getExecStack().toString());
+        logFile.println("\t"+ crtProgram.getExecStack().toString());
         logFile.println(">Symbol Table");
-        logFile.println("\t"+getCurrentProg(0).getSymTable().toString());
+        logFile.println("\t"+ crtProgram.getSymTable().toString());
         logFile.println(">Output List");
-        logFile.println("\t"+getCurrentProg(0).getOutList().toString());
+        logFile.println("\t"+ crtProgram.getOutList().toString());
         logFile.println(">File Table");
-        logFile.println("\t"+getCurrentProg(0).getFileTable().toString());
+        logFile.println("\t"+ crtProgram.getFileTable().toString());
         logFile.println(">Heap");
-        logFile.println("\t"+getCurrentProg(0).getHeap().toString());
+        logFile.println("\t"+ crtProgram.getHeap().toString());
         logFile.println("========================== ENDING LOG SESSION ==========================");
         logFile.flush();
         logFile.close();
+    }
+
+    @Override
+    public void setPrgList(List<PrgState> newPrgStateList) {
+        myProgStates.setOutList((ArrayList<PrgState>) newPrgStateList);
     }
 }

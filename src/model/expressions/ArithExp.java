@@ -5,6 +5,7 @@ import model.ADTs.IDictionary;
 import model.ADTs.IHeap;
 import model.values.IntType;
 import model.values.IntValue;
+import model.values.Type;
 import model.values.Value;
 
 public final class ArithExp implements IExpression{
@@ -61,6 +62,20 @@ public final class ArithExp implements IExpression{
 
     @Override
     public IExpression deepCopy(){
-        return new ArithExp(operand, exp1, exp2);
+        IExpression newExp1 = exp1.deepCopy();
+        IExpression newExp2 = exp2.deepCopy();
+        return new ArithExp(operand, newExp1, newExp2);
+    }
+
+    @Override
+    public Type typeCheck(IDictionary<String, Type> typeEnv) throws MyException {
+        Type T1, T2;
+        T1 = exp1.typeCheck(typeEnv);
+        T2 = exp2.typeCheck(typeEnv);
+        if (T1.equals(new IntType())) {
+            if (T2.equals(new IntType()))
+                return new IntType();
+            else throw new MyException("Second operand is not an integer in [ "+exp1.toString()+operand+exp2.toString()+" ]");
+        } else throw new MyException("First operand is not an integer in [ "+exp1.toString()+operand+exp2.toString()+" ]");
     }
 }

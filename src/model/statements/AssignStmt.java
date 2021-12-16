@@ -31,12 +31,21 @@ public final class AssignStmt implements IStmt{
                 throw new MyException("Declared type of variable "+id+" and type of the assigned expression do not match");
         }
         else throw new MyException("The used variable "+id+" was not declared before!");
-        return state;
+        return null;
     }
 
     @Override
     public IStmt deepCopy() {
         return new AssignStmt(id, expression);
+    }
+
+    @Override
+    public IDictionary<String, Type> typeCheck(IDictionary<String, Type> typeEnv) throws MyException {
+        Type typeVar = typeEnv.lookup(id);
+        Type typeExp = expression.typeCheck(typeEnv);
+        if (typeVar.equals(typeExp))
+            return typeEnv;
+        else throw new MyException("Assignment: right hand side and left hand side have different types! ["+id+"("+typeEnv.lookup(id)+") "+"can't be assigned "+expression+"]");
     }
 
     @Override

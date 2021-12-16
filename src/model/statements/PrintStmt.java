@@ -6,6 +6,7 @@ import model.ADTs.IHeap;
 import model.ADTs.IList;
 import model.PrgState;
 import model.expressions.IExpression;
+import model.values.Type;
 import model.values.Value;
 
 public class PrintStmt implements IStmt{
@@ -23,12 +24,18 @@ public class PrintStmt implements IStmt{
 
         outList.add(exp.evaluate(symTable, heap));
 
-        return state;
+        return null;
     }
 
     @Override
     public IStmt deepCopy() {
         return new PrintStmt(exp);
+    }
+
+    @Override
+    public IDictionary<String, Type> typeCheck(IDictionary<String, Type> typeEnv) throws MyException {
+        exp.typeCheck(typeEnv);
+        return typeEnv;
     }
 
     @Override
